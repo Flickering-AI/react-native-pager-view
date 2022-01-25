@@ -26,13 +26,13 @@ class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
     self.eventDispatcher?.send(RCTOnPageSelected(reactTag: self.reactTag, position: NSNumber(value: index), coalescingKey: 0))
   }
   
-  func segmentedView(_ segmentedView: JXSegmentedView, didClickSelectedItemAt index: Int) {
-    self.eventDispatcher?.send(RCTOnPageSelected(reactTag: self.reactTag, position: NSNumber(value: index), coalescingKey: 0))
-  }
-  
-  func segmentedView(_ segmentedView: JXSegmentedView, didScrollSelectedItemAt index: Int) {
-    self.eventDispatcher?.send(RCTOnPageSelected(reactTag: self.reactTag, position: NSNumber(value: index), coalescingKey: 0))
-  }
+//  func segmentedView(_ segmentedView: JXSegmentedView, didClickSelectedItemAt index: Int) {
+//    self.eventDispatcher?.send(RCTOnPageSelected(reactTag: self.reactTag, position: NSNumber(value: index), coalescingKey: 0))
+//  }
+//  
+//  func segmentedView(_ segmentedView: JXSegmentedView, didScrollSelectedItemAt index: Int) {
+//    self.eventDispatcher?.send(RCTOnPageSelected(reactTag: self.reactTag, position: NSNumber(value: index), coalescingKey: 0))
+//  }
   
   func segmentedView(_ segmentedView: JXSegmentedView, scrollingFrom leftIndex: Int, to rightIndex: Int, percent: CGFloat) {
     self.eventDispatcher?.send(RCTOnPageScrollEvent(reactTag: self.reactTag, position: NSNumber(value: leftIndex), offset: NSNumber(value: percent)))
@@ -99,6 +99,34 @@ class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
   override func didUpdateReactSubviews() {
     if ((self.segmentedView == nil) && self.reactViewController() != nil) {
       self.setupControllers()
+    } else if (self.segmentedView != nil) {
+      let subViews = self.reactSubviews()
+      if (subViews!.count == 0) {
+          return;
+      }
+      var titles = [String]()
+      for _ in subViews! {
+        titles.append("test")
+      }
+      segmentedDataSource?.titles = titles;
+      segmentedView?.defaultSelectedIndex = self.initialPage
+      
+      for vc in viewControllers {
+          vc.view.removeFromSuperview()
+      }
+      viewControllers.removeAll()
+
+      for subView in subViews! {
+        if ((subView.reactViewController()?.isKind(of: ListBaseViewController.self)) != nil) {
+          viewControllers.append(subView.reactViewController() as! ListBaseViewController)
+        } else {
+          let viewController = ListBaseViewController()
+          viewController.view = subView
+          viewControllers.append(viewController)
+        }
+      }
+      
+      segmentedView?.reloadData()
     }
   }
   
