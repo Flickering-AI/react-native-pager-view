@@ -8,6 +8,34 @@
 import Foundation
 import JXSegmentedView
 
+class ListContinerView: UIView {
+  var reactSubView: UIView
+  var reactBound: CGRect
+  
+  init(reactSubView: UIView, bound: CGRect) {
+    self.reactSubView = reactSubView
+    self.reactBound = bound
+    self.reactSubView.frame = self.reactBound
+    super.init(frame: bound)
+  }
+  
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    self.reactSubView.frame = self.reactBound
+    addSubview(self.reactSubView)
+  }
+}
+
+extension ListContinerView: JXSegmentedListContainerViewListDelegate {
+    func listView() -> UIView {
+        return self
+    }
+}
+
 class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListContainerViewDataSource {
   func numberOfLists(in listContainerView: JXSegmentedListContainerView) -> Int {
     if let titleDataSource = segmentedView!.dataSource as? JXSegmentedBaseDataSource {
@@ -17,8 +45,8 @@ class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
   }
   
   func listContainerView(_ listContainerView: JXSegmentedListContainerView, initListAt index: Int) -> JXSegmentedListContainerViewListDelegate {
-    let viewController = self.viewControllers[index]
-    return viewController
+//    print("self.bounds:\(self.bounds)")
+    return ListContinerView(reactSubView: self.reactSubviews()[index], bound: self.bounds)
   }
   
 
@@ -29,7 +57,7 @@ class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
 //  func segmentedView(_ segmentedView: JXSegmentedView, didClickSelectedItemAt index: Int) {
 //    self.eventDispatcher?.send(RCTOnPageSelected(reactTag: self.reactTag, position: NSNumber(value: index), coalescingKey: 0))
 //  }
-//  
+//
 //  func segmentedView(_ segmentedView: JXSegmentedView, didScrollSelectedItemAt index: Int) {
 //    self.eventDispatcher?.send(RCTOnPageSelected(reactTag: self.reactTag, position: NSNumber(value: index), coalescingKey: 0))
 //  }
@@ -47,7 +75,7 @@ class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
   lazy var listContainerView: JXSegmentedListContainerView! = {
       return JXSegmentedListContainerView(dataSource: self)
   }()
-  var viewControllers = [ListBaseViewController]()
+  var cachedViews = [ListContinerView]()
   var eventDispatcher: RCTEventDispatcher?
   
   @objc var color: String = "" {
@@ -111,21 +139,6 @@ class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
       segmentedDataSource?.titles = titles;
       segmentedView?.defaultSelectedIndex = self.initialPage
       
-      for vc in viewControllers {
-          vc.view.removeFromSuperview()
-      }
-      viewControllers.removeAll()
-
-      for subView in subViews! {
-        if ((subView.reactViewController()?.isKind(of: ListBaseViewController.self)) != nil) {
-          viewControllers.append(subView.reactViewController() as! ListBaseViewController)
-        } else {
-          let viewController = ListBaseViewController()
-          viewController.view = subView
-          viewControllers.append(viewController)
-        }
-      }
-      
       segmentedView?.reloadData()
     }
   }
@@ -137,21 +150,17 @@ class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
     var titles = [String]()
     for subView in subViews! {
       titles.append("test")
-      let viewController = ListBaseViewController()
-      viewController.view = subView
-      viewControllers.append(viewController)
     }
-    
     
     //segmentedDataSource一定要通过属性强持有，不然会被释放掉
     segmentedDataSource = JXSegmentedTitleDataSource()
     //配置数据源相关配置属性
     segmentedDataSource!.titles = titles
-    segmentedDataSource!.isTitleColorGradientEnabled = true
+//    segmentedDataSource!.isTitleColorGradientEnabled = true
     //配置指示器
-    let indicator = JXSegmentedIndicatorLineView()
-    indicator.indicatorWidth = 20
-    segmentedView!.indicators = [indicator]
+//    let indicator = JXSegmentedIndicatorLineView()
+//    indicator.indicatorWidth = 20
+//    segmentedView!.indicators = [indicator]
     
     segmentedView!.defaultSelectedIndex = initialPage
     segmentedView!.dataSource = segmentedDataSource!
@@ -160,15 +169,16 @@ class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
     
     self.addSubview(self.segmentedView!)
     segmentedView!.listContainer = listContainerView
+//    segmentedView?.contentScrollView =
     self.addSubview(listContainerView)
-    self.segmentedView!.frame = self.bounds
+    self.listContainerView.frame = self.bounds
     self.segmentedView!.layoutIfNeeded()
   }
   
   override func layoutSubviews() {
     super.layoutSubviews()
-    segmentedView!.frame = CGRect(x: 0,y: 0,width: 0,height: 0)
-    listContainerView.frame = self.bounds
+    self.segmentedView!.frame = CGRect(x: 0,y: 0,width: 0,height: 0)
+    self.listContainerView.frame = self.bounds
   }
   
   init(eventDispatcher: RCTEventDispatcher?) {
@@ -180,18 +190,4 @@ class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
     fatalError("init(coder:) has not been implemented")
   }
   
-}
-
-
-class ListBaseViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-}
-
-extension ListBaseViewController: JXSegmentedListContainerViewListDelegate {
-    func listView() -> UIView {
-        return view
-    }
 }
