@@ -46,6 +46,12 @@ class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
   
   func listContainerView(_ listContainerView: JXSegmentedListContainerView, initListAt index: Int) -> JXSegmentedListContainerViewListDelegate {
 //    print("self.bounds:\(self.bounds)")
+    if (self.bounds.size.width == 0 || self.bounds.size.height == 0) {
+      print("incorrect size, update again")
+      DispatchQueue.main.async {
+        self.updateDataSource()
+      }
+    }
     return ListContinerView(reactSubView: self.reactSubviews()[index], bound: self.bounds)
   }
   
@@ -128,19 +134,23 @@ class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
     if ((self.segmentedView == nil) && self.reactViewController() != nil) {
       self.setupControllers()
     } else if (self.segmentedView != nil) {
-      let subViews = self.reactSubviews()
-      if (subViews!.count == 0) {
-          return;
-      }
-      var titles = [String]()
-      for _ in subViews! {
-        titles.append("test")
-      }
-      segmentedDataSource?.titles = titles;
-      segmentedView?.defaultSelectedIndex = self.initialPage
-      
-      segmentedView?.reloadData()
+      self.updateDataSource()
     }
+  }
+  
+  func updateDataSource() {
+    let subViews = self.reactSubviews()
+    if (subViews!.count == 0) {
+        return;
+    }
+    var titles = [String]()
+    for _ in subViews! {
+      titles.append("test")
+    }
+    segmentedDataSource?.titles = titles;
+    segmentedView?.defaultSelectedIndex = self.initialPage
+    
+    segmentedView?.reloadData()
   }
   
   func setupControllers() {
