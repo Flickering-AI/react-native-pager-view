@@ -57,6 +57,7 @@ class ReactNativePageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
   
 
   func segmentedView(_ segmentedView: JXSegmentedView, didSelectedItemAt index: Int) {
+    segmentedView.listContainer?.didClickSelectedItem(at: index) // Fix blank screen in a hack way. Wait for JXSegmentedView update to fix.
     self.eventDispatcher?.send(RCTOnPageSelected(reactTag: self.reactTag, position: NSNumber(value: index), coalescingKey: 0))
   }
   
