@@ -11,23 +11,37 @@ import Foundation
 @objc(ReactViewPagerManager)
 class ReactViewPagerManager: RCTViewManager {
   
-  var viewInstance: ReactNativePageView?
-
   override class func requiresMainQueueSetup() -> Bool {
     return false
   }
   
   override func view() -> (UIView) {
-    self.viewInstance = ReactNativePageView(eventDispatcher: self.bridge.eventDispatcher() as! RCTEventDispatcher)
-    return self.viewInstance!
+    return NativePageView(eventDispatcher: self.bridge.eventDispatcher() as! RCTEventDispatcher)
   }
   
   @objc func setPage(_ reactTag: NSNumber, index: NSNumber) {
-      
-      DispatchQueue.main.async {
-        let nextIndex = Int(truncating: index)
-        self.viewInstance!.segmentedView?.selectItemAt(index: nextIndex);
-        self.viewInstance!.listContainerView?.didClickSelectedItem(at: nextIndex)
-      }
-    }
+    let nextIndex = Int(truncating: index)
+    self.bridge.uiManager.addUIBlock { (uiManager: RCTUIManager?, viewRegistry: [NSNumber : UIView]?) in
+      (viewRegistry![reactTag] as! ReactNativePageView).setPage(nextPageIndex: nextIndex)
+    };
+  }
+}
+
+@objc(JXSegmentedPageViewManager)
+class JXSegmentedPageViewManager: RCTViewManager {
+  
+  override class func requiresMainQueueSetup() -> Bool {
+    return false
+  }
+  
+  override func view() -> (UIView) {
+    return JXSegmentedPageView(eventDispatcher: self.bridge.eventDispatcher() as! RCTEventDispatcher)
+  }
+  
+  @objc func setPage(_ reactTag: NSNumber, index: NSNumber) {
+    let nextIndex = Int(truncating: index)
+    self.bridge.uiManager.addUIBlock { (uiManager: RCTUIManager?, viewRegistry: [NSNumber : UIView]?) in
+      (viewRegistry![reactTag] as! ReactNativePageView).setPage(nextPageIndex: nextIndex)
+    };
+  }
 }

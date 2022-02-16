@@ -9,7 +9,7 @@ import type {
 } from './types';
 
 import { childrenWithOverriddenStyle } from './utils';
-import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
+import { getViewManagerConfig, JXSegmentedPageViewManager, PagerViewViewManager } from './PagerViewNative';
 
 /**
  * Container that allows to flip left and right between child views. Each
@@ -95,7 +95,7 @@ export class PagerView extends React.Component<PagerViewProps> {
   public setPage = (selectedPage: number) => {
     UIManager.dispatchViewManagerCommand(
       ReactNative.findNodeHandle(this),
-      getViewManagerConfig().Commands.setPage,
+      getViewManagerConfig(this.props.customViewPager).Commands.setPage,
       [selectedPage]
     );
   };
@@ -107,7 +107,7 @@ export class PagerView extends React.Component<PagerViewProps> {
   public setPageWithoutAnimation = (selectedPage: number) => {
     UIManager.dispatchViewManagerCommand(
       ReactNative.findNodeHandle(this),
-      getViewManagerConfig().Commands.setPageWithoutAnimation,
+      getViewManagerConfig(this.props.customViewPager).Commands.setPageWithoutAnimation,
       [selectedPage]
     );
   };
@@ -120,7 +120,7 @@ export class PagerView extends React.Component<PagerViewProps> {
   public setScrollEnabled = (scrollEnabled: boolean) => {
     UIManager.dispatchViewManagerCommand(
       ReactNative.findNodeHandle(this),
-      getViewManagerConfig().Commands.setScrollEnabled,
+      getViewManagerConfig(this.props.customViewPager).Commands.setScrollEnabled,
       [scrollEnabled]
     );
   };
@@ -141,8 +141,9 @@ export class PagerView extends React.Component<PagerViewProps> {
   }
 
   render() {
+    const ViewManager = this.props.customViewPager === "JXSegmentedPageView" ? JXSegmentedPageViewManager : PagerViewViewManager;
     return (
-      <PagerViewViewManager
+      <ViewManager
         {...this.props}
         ref={this.PagerView as any /** TODO: Fix ref type */}
         style={this.props.style}

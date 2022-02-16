@@ -11,6 +11,26 @@ RCT_EXPORT_VIEW_PROPERTY(initialPage, NSInteger)
 //RCT_EXPORT_VIEW_PROPERTY(orientation, UIPageViewControllerNavigationOrientation)
 RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPageScroll, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onPageScrollStateChanged, RCTDirectEventBlock)
+//RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
+//RCT_EXPORT_VIEW_PROPERTY(layoutDirection, NSString)
+
+RCT_EXTERN_METHOD(setPage:(nonnull NSNumber *)reactTag index: (nonnull NSNumber *)index)
+RCT_EXPORT_VIEW_PROPERTY(loop, BOOL)
+
+@end
+
+@interface RCT_EXTERN_REMAP_MODULE(JXSegmentedPageView, JXSegmentedPageViewManager, RCTViewManager)
+
+RCT_EXPORT_VIEW_PROPERTY(color, NSString)
+
+RCT_EXPORT_VIEW_PROPERTY(initialPage, NSInteger)
+//RCT_EXPORT_VIEW_PROPERTY(pageMargin, NSInteger)
+
+//RCT_EXPORT_VIEW_PROPERTY(transitionStyle, UIPageViewControllerTransitionStyle)
+//RCT_EXPORT_VIEW_PROPERTY(orientation, UIPageViewControllerNavigationOrientation)
+RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onPageScroll, RCTDirectEventBlock)
 //RCT_EXPORT_VIEW_PROPERTY(onPageScrollStateChanged, RCTDirectEventBlock)
 //RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
 //RCT_EXPORT_VIEW_PROPERTY(layoutDirection, NSString)

@@ -137,4 +137,7 @@ export interface PagerViewProps {
    * after reaching end or very beginning of pages. The default value is false.
    */
   overdrag?: boolean;
+
+  customViewPager?: "RNCViewPager" | "JXSegmentedPageView";
+  loop?: boolean;
 }
