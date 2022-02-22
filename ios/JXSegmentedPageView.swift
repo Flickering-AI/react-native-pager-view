@@ -202,11 +202,9 @@ class JXSegmentedPageView : UIView, JXSegmentedViewDelegate, JXSegmentedListCont
     fatalError("init(coder:) has not been implemented")
   }
   
-}
-
-extension JXSegmentedPageView: ReactNativePageView {
   func setPage(nextPageIndex: Int) {
     self.segmentedView?.selectItemAt(index: nextPageIndex);
     self.listContainerView?.didClickSelectedItem(at: nextPageIndex)
   }
+  
 }
