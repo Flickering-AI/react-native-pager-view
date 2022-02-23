@@ -138,6 +138,6 @@ export interface PagerViewProps {
    */
   overdrag?: boolean;
 
-  customViewPager?: "RNCViewPager" | "JXSegmentedPageView";
+  customViewPager?: "RNCViewPager" | "JXSegmentedPageView"  | "NativePageView";
   loop?: boolean;
 }

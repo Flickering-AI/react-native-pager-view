@@ -9,7 +9,7 @@ import type {
 } from './types';
 
 import { childrenWithOverriddenStyle } from './utils';
-import { getViewManagerConfig, JXSegmentedPageViewManager, PagerViewViewManager } from './PagerViewNative';
+import { getViewManagerConfig, JXSegmentedPageViewManager, PagerViewViewManager, NativePageViewManager } from './PagerViewNative';
 
 /**
  * Container that allows to flip left and right between child views. Each
@@ -141,7 +141,13 @@ export class PagerView extends React.Component<PagerViewProps> {
   }
 
   render() {
-    const ViewManager = this.props.customViewPager === "JXSegmentedPageView" ? JXSegmentedPageViewManager : PagerViewViewManager;
+    let ViewManager = PagerViewViewManager;
+    if (this.props.customViewPager === "JXSegmentedPageView") {
+      ViewManager = JXSegmentedPageViewManager;
+    }
+    if (this.props.customViewPager === "NativePageView") {
+      ViewManager = NativePageViewManager;
+    }
     return (
       <ViewManager
         {...this.props}
