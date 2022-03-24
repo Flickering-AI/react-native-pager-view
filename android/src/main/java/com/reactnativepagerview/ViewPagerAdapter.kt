@@ -1,5 +1,6 @@
 package com.reactnativepagerview
 
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -54,6 +55,10 @@ class ViewPagerAdapter() : Adapter<ViewPagerViewHolder>() {
   }
 
   fun removeChildAt(index: Int) {
+    if (index == -1) {
+      Log.e("ViewPagerAdapter", "index == -1 found!")
+      return
+    }
     childrenViews.removeAt(index)
     notifyItemRemoved(index)
   }
