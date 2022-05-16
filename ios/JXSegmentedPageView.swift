@@ -38,7 +38,7 @@ extension ListContinerView: JXSegmentedListContainerViewListDelegate {
 
 class JXSegmentedPageView : UIView, JXSegmentedViewDelegate, JXSegmentedListContainerViewDataSource {
   func numberOfLists(in listContainerView: JXSegmentedListContainerView) -> Int {
-    if let titleDataSource = segmentedView!.dataSource as? JXSegmentedBaseDataSource {
+    if let titleDataSource = segmentedView?.dataSource as? JXSegmentedBaseDataSource {
         return titleDataSource.dataSource.count
     }
     return 0
